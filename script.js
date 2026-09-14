@@ -260,3 +260,352 @@ document.addEventListener("DOMContentLoaded", () => {
   fillRow(row2, rowB);
 
 });
+
+// =========================================================
+// SKILLS SECTION
+// INTERACTIVE CIRCULAR PERCENTAGE
+// =========================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+
+  const orbitSkills =
+    document.querySelectorAll(".orbit-skill");
+
+
+  const skillRows =
+    document.querySelectorAll(".skill-row");
+
+
+  const activeSkill =
+    document.getElementById("activeSkill");
+
+
+  const percentageEl =
+    document.getElementById("skillPercentage");
+
+
+  const progressRing =
+    document.querySelector(
+      ".progress-ring-fill"
+    );
+
+
+  if (
+    !orbitSkills.length ||
+    !skillRows.length ||
+    !progressRing ||
+    !percentageEl
+  ) {
+    return;
+  }
+
+
+
+  // =======================================================
+  // CIRCLE CALCULATION
+  // =======================================================
+
+  const radius = 68;
+
+  const circumference =
+    2 * Math.PI * radius;
+
+
+  progressRing.style.strokeDasharray =
+    circumference;
+
+
+  progressRing.style.strokeDashoffset =
+    circumference;
+
+
+
+  // =======================================================
+  // ANIMATION VARIABLES
+  // =======================================================
+
+  let percentageAnimation;
+
+
+  let currentPercentage = 0;
+
+
+
+  // =======================================================
+  // ANIMATE NUMBER
+  // =======================================================
+
+  function animateNumber(target) {
+
+
+    cancelAnimationFrame(
+      percentageAnimation
+    );
+
+
+    const start =
+      currentPercentage;
+
+
+    const difference =
+      target - start;
+
+
+    const duration = 900;
+
+
+    const startTime =
+      performance.now();
+
+
+
+    function animate(time) {
+
+
+      const elapsed =
+        time - startTime;
+
+
+      const progress =
+        Math.min(
+          elapsed / duration,
+          1
+        );
+
+
+      // Smooth ease-out
+
+      const eased =
+        1 -
+        Math.pow(
+          1 - progress,
+          4
+        );
+
+
+      const value =
+        Math.round(
+          start +
+          difference * eased
+        );
+
+
+      percentageEl.textContent =
+        value;
+
+
+      if (progress < 1) {
+
+        percentageAnimation =
+          requestAnimationFrame(
+            animate
+          );
+
+      } else {
+
+        currentPercentage =
+          target;
+
+      }
+
+    }
+
+
+    percentageAnimation =
+      requestAnimationFrame(
+        animate
+      );
+
+  }
+
+
+
+  // =======================================================
+  // UPDATE CIRCLE
+  // =======================================================
+
+  function updateCircle(level) {
+
+
+    const percentage =
+      Number(level);
+
+
+    const offset =
+      circumference -
+      (
+        percentage / 100
+      ) *
+      circumference;
+
+
+    progressRing.style.strokeDashoffset =
+      offset;
+
+
+    animateNumber(
+      percentage
+    );
+
+  }
+
+
+
+  // =======================================================
+  // ACTIVATE SKILL
+  // =======================================================
+
+  function activateSkill(
+    skillName,
+    level
+  ) {
+
+
+    // Center title
+
+    activeSkill.textContent =
+      skillName;
+
+
+
+    // Orbit active state
+
+    orbitSkills.forEach(
+      skill => {
+
+        skill.classList.toggle(
+          "active",
+
+          skill.dataset.skill ===
+          skillName
+        );
+
+      }
+    );
+
+
+
+    // List active state
+
+    skillRows.forEach(
+      row => {
+
+        row.classList.toggle(
+          "active",
+
+          row.dataset.skill ===
+          skillName
+        );
+
+      }
+    );
+
+
+
+    // Circular percentage
+
+    updateCircle(
+      level
+    );
+
+  }
+
+
+
+  // =======================================================
+  // ORBIT SKILL EVENTS
+  // =======================================================
+
+  orbitSkills.forEach(
+    skill => {
+
+
+      skill.addEventListener(
+        "mouseenter",
+        () => {
+
+          activateSkill(
+            skill.dataset.skill,
+            skill.dataset.level
+          );
+
+        }
+      );
+
+
+
+      skill.addEventListener(
+        "click",
+        () => {
+
+          activateSkill(
+            skill.dataset.skill,
+            skill.dataset.level
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+
+  // =======================================================
+  // RIGHT LIST EVENTS
+  // =======================================================
+
+  skillRows.forEach(
+    row => {
+
+
+      row.addEventListener(
+        "mouseenter",
+        () => {
+
+          activateSkill(
+            row.dataset.skill,
+            row.dataset.level
+          );
+
+        }
+      );
+
+
+
+      row.addEventListener(
+        "click",
+        () => {
+
+          activateSkill(
+            row.dataset.skill,
+            row.dataset.level
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+
+  // =======================================================
+  // INITIAL ANIMATION
+  // =======================================================
+
+  setTimeout(
+    () => {
+
+      activateSkill(
+        "React.js",
+        90
+      );
+
+    },
+    500
+  );
+
+
+});
